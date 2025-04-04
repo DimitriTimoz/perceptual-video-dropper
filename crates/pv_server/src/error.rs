@@ -1,3 +1,4 @@
+use bincode::error::{self, DecodeError, EncodeError};
 use quinn::ConnectionError;
 use std::error::Error;
 use thiserror::Error;
@@ -12,5 +13,12 @@ pub enum ServerError {
     IoError(#[from] std::io::Error),
     #[error("Invalid address: {0}")]
     InvalidAddress(#[from] std::net::AddrParseError),
+    #[error("Encode error: {0}")]
+    EncodeError(#[from] EncodeError),
+    #[error("Decode error: {0}")]
+    DecodeError(#[from] DecodeError),
+    #[error("Write error: {0}")]
+    WriteError(#[from] quinn::WriteError),
+    #[error("Read exact error: {0}")]
+    ReadExactError(#[from] quinn::ReadExactError),
 }
-
