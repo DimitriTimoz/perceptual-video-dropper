@@ -4,3 +4,10 @@ members = [
     "crates/pv_core", 
     "crates/pv_server"
 ]
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1", features = ["rt", "macros"] }
+log = "0.4"
+env_logger = "0.11"
+thiserror = { version = "2.0"}
