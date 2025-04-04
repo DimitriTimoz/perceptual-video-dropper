@@ -13,7 +13,7 @@ pub async fn send_packet<E: enc::Encode>(
     Ok(())
 }
 
-pub(crate) async fn recv_packet<D: de::Decode<()>>(
+pub async fn recv_packet<D: de::Decode<()>>(
     stream: &mut quinn::RecvStream,
 ) -> Result<D, ServerError> {
     let mut len_buf = [0u8; 4];
@@ -34,6 +34,22 @@ async fn handle_request(
     info!("Handling request");
     let request = recv_packet::<Request>(&mut recv).await?;
     info!("Received request: {:?}", request);
+
+    match request {
+        Request::VideoStream(stream_id) => {
+            info!("Received video stream request: {:?}", stream_id);
+            let response = Response::Frame{data:vec![]};
+            send_packet(&mut send, response).await?;        
+        },
+        Request::Ping(ping_id) => {
+            info!("Received ping request: {:?}", ping_id);
+            let response = Response::Ping(ping_id);
+            send_packet(&mut send, response).await?;
+        }
+        _ => {
+            unimplemented!("Request: {:?} unimplemented", request);
+        }
+    }
     Ok(())
 }
 
