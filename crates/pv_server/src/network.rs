@@ -9,7 +9,7 @@ pub async fn handle_connection(
     info!("New connection: {:?}", connection.remote_address());
     loop {
         let stream = connection.accept_bi().await;
-        let stream = match stream {
+        let (send, recv) = match stream {
             Err(quinn::ConnectionError::ApplicationClosed { .. }) => {
                 info!("connection closed");
                 return Ok(());
@@ -19,9 +19,6 @@ pub async fn handle_connection(
             }
             Ok(s) => s,
         };
-        // Print the stream ID
-        let stream_id = stream.1.id();
-        info!("Stream ID: {:?}", stream_id);
     }
 
     Ok(())

@@ -2,10 +2,9 @@ use quinn::ServerConfig;
 use rustls::pki_types::{CertificateDer, PrivatePkcs8KeyDer};
 use std::{error::Error, io::Write};
 
-use crate::{network::handle_connection, prelude::*};
+use crate::{config::VideoServerConfig, network::handle_connection, prelude::*};
 use quinn::{ClientConfig, Endpoint};
 use std::fs;
-use std::sync::Arc;
 
 fn configure_client(cert_path: &str) -> Result<ClientConfig, Box<dyn Error + Send + Sync + 'static>> {
     // Load the server certificate from the file
@@ -55,13 +54,14 @@ fn make_server_endpoint(
 
 pub struct Server {
     endpoint: Endpoint,
+    config: VideoServerConfig,
 }
 
 impl Server {
     pub async fn new(
-        bind_addr: SocketAddr,
+        config: VideoServerConfig,
     ) -> Result<Self, ServerError> {
-        let (endpoint, server_cert) = make_server_endpoint(bind_addr)?;
+        let (endpoint, server_cert) = make_server_endpoint(config.listen_address()?)?;
         // Save the server certificate to a file
         let cert_path = "pub_key.pem";
         let mut file = std::fs::File::create(cert_path)?;
@@ -69,6 +69,7 @@ impl Server {
         info!("Server certificate saved to {}", cert_path);
         Ok(Server {
             endpoint,
+            config,
         })
     }
 

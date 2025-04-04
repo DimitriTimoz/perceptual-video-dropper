@@ -10,5 +10,7 @@ pub enum ServerError {
     Error(#[from] Box<dyn Error + Send + Sync + 'static>),
     #[error("Io error: {0}")]
     IoError(#[from] std::io::Error),
+    #[error("Invalid address: {0}")]
+    InvalidAddress(#[from] std::net::AddrParseError),
 }
 
