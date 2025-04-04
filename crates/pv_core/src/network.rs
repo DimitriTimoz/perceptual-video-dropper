@@ -11,7 +11,7 @@ pub enum Request {
 #[derive(Encode, Decode, Debug)]
 pub enum Response {
     /// Response to a ping request
-    Ping(u64),
+    Pong(u64),
     /// Response Frame
     Frame {
         /// Frame data

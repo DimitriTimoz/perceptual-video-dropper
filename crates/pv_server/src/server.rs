@@ -43,7 +43,6 @@ fn configure_server()
     Ok((server_config, cert_der))
 }
 
-
 fn make_server_endpoint(
     bind_addr: SocketAddr,
 ) -> Result<(Endpoint, CertificateDer<'static>), Box<dyn Error + Send + Sync + 'static>> {

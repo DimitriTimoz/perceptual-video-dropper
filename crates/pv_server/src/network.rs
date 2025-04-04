@@ -43,7 +43,7 @@ async fn handle_request(
         },
         Request::Ping(ping_id) => {
             info!("Received ping request: {:?}", ping_id);
-            let response = Response::Ping(ping_id);
+            let response = Response::Pong(ping_id);
             send_packet(&mut send, response).await?;
         }
         _ => {
@@ -80,6 +80,4 @@ pub async fn handle_connection(
             }
         );
     }
-
-    Ok(())
 }
