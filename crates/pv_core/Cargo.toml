@@ -9,4 +9,6 @@ bincode = { workspace = true }
 tokio = { workspace = true }
 log = { workspace = true }
 env_logger = { workspace = true }
+thiserror = { workspace = true }
+quinn = { workspace = true }
 derive_more = { version = "2.0", features = ["full"] }

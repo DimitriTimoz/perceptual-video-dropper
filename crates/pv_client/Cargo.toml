@@ -10,3 +10,6 @@ serde = { workspace = true }
 env_logger = { workspace = true }
 log = { workspace = true }
 quinn = { workspace = true}
+ffmpeg-next = "7.1"
+minifb = "0.28"
+image = "0.25"

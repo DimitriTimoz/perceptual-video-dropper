@@ -1,29 +1,6 @@
-use bincode::{de, enc};
-use quinn::{Incoming, SendStream};
+use quinn::Incoming;
 use crate::prelude::*;
-use pv_core::network::{Request, Response};
-
-pub async fn send_packet<E: enc::Encode>(
-    stream: &mut SendStream,
-    packet: E,
-) -> Result<(), ServerError> {
-    let encoded = bincode::encode_to_vec(packet, bincode::config::standard())?;
-    stream.write_all(&(encoded.len() as u32).to_be_bytes()).await?;
-    stream.write_all(&encoded).await?;
-    Ok(())
-}
-
-pub async fn recv_packet<D: de::Decode<()>>(
-    stream: &mut quinn::RecvStream,
-) -> Result<D, ServerError> {
-    let mut len_buf = [0u8; 4];
-    stream.read_exact(&mut len_buf).await?;
-    let len = u32::from_be_bytes(len_buf) as usize;
-    let mut buf = vec![0u8; len];
-    stream.read_exact(&mut buf).await?;
-    let (packet, _) = bincode::decode_from_slice::<D, _>(&buf, bincode::config::standard())?;
-    Ok(packet)
-}
+use pv_core::network::{recv_packet, send_packet, Request, Response};
 
 async fn handle_request(
     send: quinn::SendStream,
@@ -38,8 +15,22 @@ async fn handle_request(
     match request {
         Request::VideoStream(stream_id) => {
             info!("Received video stream request: {:?}", stream_id);
-            let response = Response::Frame{data:vec![]};
-            send_packet(&mut send, response).await?;        
+            // Spawn a task to send the video stream
+            tokio::spawn(async move {
+                for i in 0..10000 {
+                    let response = Response::Frame{
+                        data: vec![i as u32; 640 * 480],
+                        width: 640,
+                        height: 480,
+                    };
+                    if let Err(e) = send_packet(&mut send, response).await {
+                        error!("Failed to send video frame: {:?}", e);
+                        break;
+                    } else {
+                        info!("Sent video frame: {:?}", i);
+                    }
+                }
+            });
         },
         Request::Ping(ping_id) => {
             info!("Received ping request: {:?}", ping_id);

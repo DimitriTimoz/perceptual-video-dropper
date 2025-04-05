@@ -1,10 +1,12 @@
-use bincode::error::{self, DecodeError, EncodeError};
+use bincode::error::{DecodeError, EncodeError};
 use quinn::ConnectionError;
 use std::error::Error;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum ServerError {
+    #[error("Core error: {0}")]
+    CoreError(#[from] pv_core::error::CoreError),
     #[error("Connection error: {0}")]
     ConnectionError(#[from] ConnectionError),
     #[error("Connection ID error: {0}")]
