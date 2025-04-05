@@ -1,0 +1,12 @@
+[package]
+name = "pv_client"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+pv_core = { path = "../pv_core" }
+tokio = { workspace = true }
+serde = { workspace = true }
+env_logger = { workspace = true }
+log = { workspace = true }
+quinn = { workspace = true}

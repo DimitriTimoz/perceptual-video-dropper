@@ -1,8 +1,9 @@
 [workspace]
 resolver = "2"
-members = [
+members = [ "crates/pv_client",
     "crates/pv_core", 
-    "crates/pv_server"
+    "crates/pv_server",
+    "crates/pv_client",
 ]
 
 [workspace.dependencies]
@@ -12,3 +13,4 @@ log = "0.4"
 env_logger = "0.11"
 thiserror = { version = "2.0"}
 bincode = { version = "2.0", features = ["derive"] }
+quinn = "0.11"
